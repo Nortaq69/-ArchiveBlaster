@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArchiveBlaster - Advanced Archive Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/effects/background-effects.css">
+    <style>
+        :root {
+            --primary-neon: #00d4ff;
+            --secondary-neon: #ff0080;
+            --accent-neon: #00ff88;
+            --warning-neon: #ff6b35;
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-glass: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-neon: 0 0 20px rgba(0, 212, 255, 0.5);
+            --border-glow: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+        }
+
+        .circuit-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-neon);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header with Glitch Effect */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--primary-neon), var(--secondary-neon), var(--accent-neon));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            position: relative;
+        }
+
+        .header h1::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 2px;
+            text-shadow: -2px 0 var(--secondary-neon);
+            top: 0;
+            color: var(--primary-neon);
+            background: none;
+            -webkit-background-clip: initial;
+            -webkit-text-fill-color: initial;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.3rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.6;
+            font-weight: 300;
+        }
+
+        /* Main Grid with Hover Effects */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: var(--border-glow);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: var(--shadow-neon);
+            border-color: var(--primary-neon);
+        }
+
+        .card-icon {
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            display: block;
+            filter: drop-shadow(0 0 10px var(--primary-neon));
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 20px var(--primary-neon));
+        }
+
+        .card h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-neon);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .card p {
+            font-family: 'Share Tech Mono', monospace;
+            opacity: 0.8;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Enhanced Upload Area */
+        .upload-area {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 2px dashed rgba(0, 212, 255, 0.3);
+            border-radius: 25px;
+            padding: 80px 40px;
+            text-align: center;
+            transition: all 0.4s ease;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-neon);
+            background: rgba(0, 212, 255, 0.1);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .upload-area.dragover::before {
+            opacity: 1;
+        }
+
+        .upload-area h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-neon);
+            font-weight: 700;
+        }
+
+        .upload-area p {
+            font-family: 'Share Tech Mono', monospace;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Custom Buttons */
+        .btn {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(45deg, var(--primary-neon), #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--secondary-neon), #cc0066);
+            box-shadow: 0 5px 15px rgba(255, 0, 128, 0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(255, 0, 128, 0.5);
+        }
+
+        .btn-accent {
+            background: linear-gradient(45deg, var(--accent-neon), #00cc66);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-accent:hover {
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            display: none;
+            margin-top: 40px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: var(--border-glow);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-neon), var(--accent-neon));
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+            font-size: 1rem;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        /* File List */
+        .file-list {
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--primary-neon);
+            transform: translateX(10px);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            font-family: 'Share Tech Mono', monospace;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Enhanced Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--bg-dark), #1a1a2e);
+            border: var(--border-glow);
+            border-radius: 25px;
+            padding: 50px;
+            color: var(--text-primary);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: var(--shadow-neon);
+            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlideIn {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -60%) scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .modal h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            color: var(--primary-neon);
+            font-weight: 700;
+        }
+
+        .modal p {
+            font-family: 'Share Tech Mono', monospace;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            color: var(--primary-neon);
+        }
+
+        .close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Custom Form Elements */
+        .form-group {
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', monospace;
+            color: var(--primary-neon);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            background: var(--bg-glass);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            background: var(--bg-glass);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Custom Range Slider */
+        .range-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+            margin: 20px 0;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-neon);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .feature-item {
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-neon);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
+        }
+
+        .feature-item h4 {
+            font-family: 'Orbitron', monospace;
+            color: var(--accent-neon);
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .feature-item p {
+            font-family: 'Share Tech Mono', monospace;
+            opacity: 0.8;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-neon);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-neon);
+        }
+    </style>
+</head>
+<body>
+    <!-- Advanced Background Effects -->
+    <div class="morphing-bg"></div>
+    <div class="cyber-grid"></div>
+    <div class="circuit-pattern"></div>
+    <div class="matrix-rain" id="matrixRain"></div>
+    <div class="data-stream" id="dataStream"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particle-system" id="particles"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="glitch neon-glow" data-text="📦 ArchiveBlaster">📦 ArchiveBlaster</h1>
+            <p class="typewriter">Advanced Archive Management Tool with Modern UI</p>
+            <p class="subtitle">Create, extract, and manage archives with beautiful futuristic interface</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="card energy-field hologram" onclick="showModal('create')">
+                <span class="card-icon">📁</span>
+                <h3>Create Archive</h3>
+                <p>Create ZIP archives from files and folders with advanced compression options and AI-powered optimization</p>
+                <div class="scan-line"></div>
+            </div>
+
+            <div class="card energy-field hologram" onclick="showModal('extract')">
+                <span class="card-icon">📂</span>
+                <h3>Extract Archive</h3>
+                <p>Extract archives to any location with support for multiple formats and intelligent file validation</p>
+                <div class="scan-line"></div>
+            </div>
+
+            <div class="card energy-field hologram" onclick="showModal('browse')">
+                <span class="card-icon">🔍</span>
+                <h3>Browse Archives</h3>
+                <p>Browse and manage your archive collection with preview capabilities and advanced search</p>
+                <div class="scan-line"></div>
+            </div>
+
+            <div class="card energy-field hologram" onclick="launchStandalone()">
+                <span class="card-icon">🚀</span>
+                <h3>Launch Standalone</h3>
+                <p>Launch as independent Electron app with full features and enhanced performance capabilities</p>
+                <div class="scan-line"></div>
+            </div>
+        </div>
+
+        <div class="upload-area digital-distortion shimmer" id="uploadArea">
+            <h3 class="neon-glow">🎯 Quick Start</h3>
+            <p>Drag and drop archives here or click to browse files</p>
+            <button class="btn pulse" onclick="browseFiles()">Browse Files</button>
+            <button class="btn btn-secondary pulse" onclick="showModal('batch')">Batch Process</button>
+            <button class="btn btn-accent pulse" onclick="showModal('ai')">AI Analysis</button>
+        </div>
+
+        <div class="progress-section" id="progressSection">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Processing...</div>
+        </div>
+
+        <div class="file-list" id="fileList"></div>
+
+        <div class="features-grid">
+            <div class="feature-item hologram">
+                <h4 class="neon-glow">🤖 AI-Powered Analysis</h4>
+                <p>Intelligent archive analysis and optimization with pattern detection and compression analysis</p>
+            </div>
+            <div class="feature-item hologram">
+                <h4 class="neon-glow">⚡ Batch Processing</h4>
+                <p>Handle multiple archives simultaneously with advanced queue management and progress tracking</p>
+            </div>
+            <div class="feature-item hologram">
+                <h4 class="neon-glow">🎨 Futuristic UI</h4>
+                <p>Beautiful cyberpunk-themed interface with smooth animations and professional polish</p>
+            </div>
+            <div class="feature-item hologram">
+                <h4 class="neon-glow">🛡️ File Validation</h4>
+                <p>Verify archive integrity and detect corruption automatically with advanced algorithms</p>
+            </div>
+            <div class="feature-item hologram">
+                <h4 class="neon-glow">🔧 Smart Optimization</h4>
+                <p>Recompress and optimize existing archives with better algorithms and redundancy removal</p>
+            </div>
+            <div class="feature-item hologram">
+                <h4 class="neon-glow">📊 Real-time Monitoring</h4>
+                <p>Monitor system resources and archive processing with animated gauges and progress indicators</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Archive Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('createModal')">&times;</span>
+            <h3>📁 Create Archive</h3>
+            <p>Select files and folders to create a new optimized archive</p>
+            
+            <div class="form-group">
+                <button class="btn" onclick="selectFiles()">Select Files</button>
+                <button class="btn btn-secondary" onclick="selectFolder()">Select Folder</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Archive Format:</label>
+                <select class="form-select" id="archiveFormat">
+                    <option value="zip">ZIP - Universal Compatibility</option>
+                    <option value="7z">7Z - Maximum Compression</option>
+                    <option value="rar">RAR - High Compression</option>
+                    <option value="tar">TAR - Unix Standard</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Compression Level: <span id="compressionValue">6</span></label>
+                <input type="range" class="range-slider" id="compressionSlider" min="1" max="9" value="6">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Archive Name:</label>
+                <input type="text" class="form-input" placeholder="Enter archive name..." id="archiveName">
+            </div>
+            
+            <button class="btn btn-accent" onclick="createArchive()">Create Archive</button>
+        </div>
+    </div>
+
+    <!-- Extract Archive Modal -->
+    <div class="modal" id="extractModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('extractModal')">&times;</span>
+            <h3>📂 Extract Archive</h3>
+            <p>Select an archive file to extract with advanced options</p>
+            
+            <div class="form-group">
+                <button class="btn" onclick="selectArchive()">Select Archive</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Extract to:</label>
+                <input type="text" class="form-input" placeholder="Choose destination folder..." id="extractPath">
+            </div>
+            
+            <div class="form-group">
+                <label style="color: var(--text-primary); display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="preserveStructure" checked> Preserve folder structure
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label style="color: var(--text-primary); display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="overwriteFiles"> Overwrite existing files
+                </label>
+            </div>
+            
+            <button class="btn btn-accent" onclick="extractArchive()">Extract Archive</button>
+        </div>
+    </div>
+
+    <!-- Browse Archives Modal -->
+    <div class="modal" id="browseModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('browseModal')">&times;</span>
+            <h3>🔍 Browse Archives</h3>
+            <p>View and manage your archive collection with advanced search</p>
+            
+            <div class="form-group">
+                <input type="text" class="form-input" placeholder="Search archives..." id="searchArchives">
+            </div>
+            
+            <div class="file-list" style="max-height: 300px; margin: 20px 0;">
+                <div class="file-item">
+                    <div class="file-info">
+                        <div class="file-name">example.zip</div>
+                        <div class="file-size">15.2 MB • Created: 2024-01-15</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 20px; font-size: 0.8rem;">Extract</button>
+                </div>
+                <div class="file-item">
+                    <div class="file-info">
+                        <div class="file-name">backup.7z</div>
+                        <div class="file-size">45.7 MB • Created: 2024-01-10</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 20px; font-size: 0.8rem;">Extract</button>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="refreshArchives()">Refresh Collection</button>
+        </div>
+    </div>
+
+    <!-- Batch Process Modal -->
+    <div class="modal" id="batchModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('batchModal')">&times;</span>
+            <h3>⚡ Batch Processing</h3>
+            <p>Process multiple archives simultaneously with advanced queue management</p>
+            
+            <div class="form-group">
+                <button class="btn" onclick="addToBatch()">Add Archives</button>
+                <button class="btn btn-secondary" onclick="clearBatch()">Clear Queue</button>
+            </div>
+            
+            <div class="file-list" style="max-height: 200px; margin: 20px 0;">
+                <div class="file-item">
+                    <div class="file-info">
+                        <div class="file-name">archive1.zip</div>
+                        <div class="file-size">Pending</div>
+                    </div>
+                    <button class="btn" style="padding: 5px 15px; font-size: 0.7rem;">Remove</button>
+                </div>
+            </div>
+            
+            <button class="btn btn-accent" onclick="startBatch()">Start Batch Process</button>
+        </div>
+    </div>
+
+    <!-- AI Analysis Modal -->
+    <div class="modal" id="aiModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('aiModal')">&times;</span>
+            <h3>🤖 AI Archive Analysis</h3>
+            <p>Intelligent analysis and optimization recommendations</p>
+            
+            <div class="form-group">
+                <button class="btn" onclick="selectForAnalysis()">Select Archive for Analysis</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Analysis Type:</label>
+                <select class="form-select">
+                    <option value="compression">Compression Analysis</option>
+                    <option value="optimization">Optimization Recommendations</option>
+                    <option value="corruption">Corruption Detection</option>
+                    <option value="patterns">Pattern Analysis</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-accent" onclick="startAnalysis()">Start AI Analysis</button>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Modal management
+        function showModal(type) {
+            const modal = document.getElementById(type + 'Modal');
+            if (modal) {
+                modal.style.display = 'block';
+                playSound('modal-open');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                playSound('modal-close');
+            }
+        }
+
+        // Sound effects
+        function playSound(type) {
+            // Simulate sound effects
+            console.log(`Playing ${type} sound`);
+        }
+
+        // File handling
+        function browseFiles() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '.zip,.rar,.7z,.tar,.gz,.bz2';
+            input.onchange = function(e) {
+                handleFiles(e.target.files);
+            };
+            input.click();
+            playSound('file-select');
+        }
+
+        function handleFiles(files) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            Array.from(files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${formatFileSize(file.size)}</div>
+                    </div>
+                    <button class="btn" onclick="processFile('${file.name}')" style="padding: 8px 20px; font-size: 0.8rem;">Process</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+            playSound('file-added');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+            playSound('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+            playSound('file-drop');
+        });
+
+        // Progress simulation
+        function simulateProgress() {
+            const progressSection = document.getElementById('progressSection');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressSection.style.display = 'block';
+            let progress = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 8 + 2;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progressSection.style.display = 'none';
+                        playSound('process-complete');
+                    }, 1000);
+                }
+                progressFill.style.width = progress + '%';
+                progressText.textContent = `Processing... ${Math.round(progress)}%`;
+            }, 150);
+        }
+
+        // Action functions
+        function selectFiles() {
+            browseFiles();
+        }
+
+        function selectFolder() {
+            alert('Folder selection would open here');
+            playSound('folder-select');
+        }
+
+        function createArchive() {
+            simulateProgress();
+            closeModal('createModal');
+            playSound('archive-create');
+        }
+
+        function selectArchive() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.zip,.rar,.7z,.tar,.gz,.bz2';
+            input.click();
+            playSound('archive-select');
+        }
+
+        function extractArchive() {
+            simulateProgress();
+            closeModal('extractModal');
+            playSound('archive-extract');
+        }
+
+        function refreshArchives() {
+            alert('Archives refreshed!');
+            playSound('refresh');
+        }
+
+        function addToBatch() {
+            browseFiles();
+        }
+
+        function clearBatch() {
+            alert('Batch queue cleared!');
+            playSound('clear');
+        }
+
+        function startBatch() {
+            simulateProgress();
+            closeModal('batchModal');
+            playSound('batch-start');
+        }
+
+        function processFile(filename) {
+            simulateProgress();
+            playSound('file-process');
+        }
+
+        function launchStandalone() {
+            alert('Launching ArchiveBlaster in standalone mode...');
+            playSound('launch');
+        }
+
+        function selectForAnalysis() {
+            browseFiles();
+        }
+
+        function startAnalysis() {
+            simulateProgress();
+            closeModal('aiModal');
+            playSound('ai-analysis');
+        }
+
+        // Compression slider
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('compressionSlider');
+            const value = document.getElementById('compressionValue');
+            
+            if (slider && value) {
+                slider.addEventListener('input', function() {
+                    value.textContent = this.value;
+                });
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+        });
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html> 
+</html> 
